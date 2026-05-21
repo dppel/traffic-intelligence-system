@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Traffic Intelligence & Vehicle Analytics</title>
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/dashboard/styles.css">
+  </head>
+  <body>
+    <!-- Background grid effect -->
+    <div class="bg-grid-overlay"></div>
+    <div class="bg-glow-radial"></div>
+
+    <header class="topbar">
+      <div class="branding">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" />
+          </svg>
+        </div>
+        <div>
+          <p class="eyebrow">Advanced AI Monitor</p>
+          <h1>Traffic Intelligence System</h1>
+        </div>
+      </div>
+      <div class="status-badge">
+        <span class="status-pulse"></span>
+        <span id="apiStatus">Checking API status</span>
+      </div>
+    </header>
+
+    <main class="layout">
+      <!-- Section 1: Controls & Video Visualizer Split -->
+      <div class="split top-split">
+        <section class="panel glass-card control-panel">
+          <div class="section-heading">
+            <div class="heading-wrap">
+              <span class="num-badge">01</span>
+              <h2>Configure & Run</h2>
+            </div>
+            <span id="runBadge" class="run-badge">No active run</span>
+          </div>
+          
+          <form id="processForm" class="process-form-stacked">
+            <div class="form-group">
+              <label for="videoPath">Target Traffic Video</label>
+              <div class="select-wrapper">
+                <select id="videoPath">
+                  <option value="">Loading video library...</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="maxFrames">Processing Frames</label>
+                <input id="maxFrames" type="number" min="1" max="2000" value="45">
+              </div>
+              <div class="form-group checkbox-group">
+                <label class="checkbox-row">
+                  <input id="saveOutput" type="checkbox" checked>
+                  <span class="custom-checkbox"></span>
+                  <span class="checkbox-text">Save processed stream</span>
+                </label>
+              </div>
+            </div>
+
+            <button type="submit" id="processButton" class="btn-primary">
+              <span class="btn-text">Start Processing Run</span>
+              <span class="btn-icon">⚡</span>
+            </button>
+          </form>
+
+          <div class="video-meta-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.083.985l-.04.025m-.041.025l-.117-.071a.75.75 0 00-.916 1.185l.117.071m2.771-8.89a9 9 0 11-12.728 12.728A9 9 0 0121.728 5.465z" />
+            </svg>
+            <p class="video-meta" id="videoMeta">Video details will appear here.</p>
+          </div>
+        </section>
+
+        <section class="panel glass-card visualizer-panel">
+          <div class="section-heading">
+            <div class="heading-wrap">
+              <span class="num-badge">02</span>
+              <h2>Interactive Overlay Stream</h2>
+            </div>
+            <span id="streamStatus" class="status-pill status-offline">Offline</span>
+          </div>
+
+          <div class="video-viewport">
+            <video id="streamPlayer" controls playsinline>
+              <source id="videoSource" src="" type="video/mp4">
+              Your browser does not support HTML5 video playback.
+            </video>
+            <div id="videoPlaceholder" class="video-placeholder">
+              <div class="placeholder-visual">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125v-9.75M3.375 19.5a1.125 1.125 0 00-1.125-1.125M2.25 18.375V6.625c0-.621.504-1.125 1.125-1.125h9.75c.621 0 1.125.504 1.125 1.125v11.75m-.002 0h7.5c.621 0 1.125-.504 1.125-1.125M12 18.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125m0 0v-5.25c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v5.25" />
+                </svg>
+              </div>
+              <p>Process a traffic video or select a completed run to view the interactive overlay stream.</p>
+            </div>
+          </div>
+
+          <div class="video-footer">
+            <div class="video-info">
+              <span class="pulse-indicator"></span>
+              <span id="activeVideoName">No active video stream</span>
+            </div>
+            <a id="downloadVideoBtn" href="#" class="btn-secondary btn-sm" download style="display: none;">
+              <span>Download Stream</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+            </a>
+          </div>
+        </section>
+      </div>
+
+      <!-- Section 2: Summary Metrics Row -->
+      <section class="metrics-grid" aria-label="Traffic metrics">
+        <article class="metric glass-card">
+          <div class="metric-header">
+            <span>Total Unique Vehicles</span>
+            <div class="metric-icon green">🚗</div>
+          </div>
+          <strong id="totalVehicles">-</strong>
+        </article>
+        <article class="metric glass-card">
+          <div class="metric-header">
+            <span>Incoming Flow</span>
+            <div class="metric-icon amber">📥</div>
+          </div>
+          <strong id="incomingVehicles">-</strong>
+        </article>
+        <article class="metric glass-card">
+          <div class="metric-header">
+            <span>Outgoing Flow</span>
+            <div class="metric-icon purple">📤</div>
+          </div>
+          <strong id="outgoingVehicles">-</strong>
+        </article>
+        <article class="metric glass-card">
+          <div class="metric-header">
+            <span>Average Active</span>
+            <div class="metric-icon blue">⚡</div>
+          </div>
+          <strong id="averageActive">-</strong>
+        </article>
+        <article class="metric glass-card">
+          <div class="metric-header">
+            <span>Peak Active Vehicles</span>
+            <div class="metric-icon orange">🔥</div>
+          </div>
+          <strong id="peakActive">-</strong>
+        </article>
+        <article class="metric glass-card">
+          <div class="metric-header">
+            <span>Dominant Congestion</span>
+            <div class="metric-icon red">🚥</div>
+          </div>
+          <strong id="congestionLevel">-</strong>
+        </article>
+      </section>
+
+      <!-- Section 3: AI Intelligence Suite -->
+      <section class="panel glass-card ai-suite-panel">
+        <div class="section-heading border-bottom">
+          <div class="heading-wrap">
+            <span class="num-badge">03</span>
+            <h2>AI Traffic Intelligence Engine</h2>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn-secondary" id="refreshAi">Refresh Predictions</button>
+            <button type="button" class="btn-primary btn-glow" id="trainAi">Retrain XGBoost Model</button>
+          </div>
+        </div>
+
+        <div class="ai-grid">
+          <article class="ai-metric-card">
+            <span>Predicted Congestion Score</span>
+            <strong id="predictedScore">-</strong>
+          </article>
+          <article class="ai-metric-card">
+            <span>Predicted Level (Next Frame)</span>
+            <strong id="predictedLevel">Train model</strong>
+          </article>
+          <article class="ai-metric-card">
+            <span>Model MAE (Error)</span>
+            <strong id="modelMae">-</strong>
+          </article>
+          <article class="ai-metric-card">
+            <span>Isolation Forest Anomalies</span>
+            <strong id="aiAnomalyCount">-</strong>
+          </article>
+        </div>
+
+        <div class="split ai-split">
+          <div class="ai-column">
+            <h3>AI Pattern Insights</h3>
+            <div id="intelligenceList" class="insight-list"></div>
+          </div>
+          <div class="ai-column">
+            <h3>SHAP Feature Contributions</h3>
+            <div id="shapList" class="feature-list"></div>
+          </div>
+        </div>
+
+        <div class="panel-subsection">
+          <div class="section-heading">
+            <h3>ML Anomaly Timeline (IsolationForest)</h3>
+            <span id="aiStatus" class="ai-status">AI not initialized</span>
+          </div>
+          <div id="aiAnomaliesList" class="events-list scrollable"></div>
+        </div>
+      </section>
+
+      <!-- Section 4: Runs & Events Split -->
+      <div class="split bottom-split">
+        <section class="panel glass-card runs-panel">
+          <div class="section-heading">
+            <div class="heading-wrap">
+              <span class="num-badge">04</span>
+              <h2>Recent Processing Runs</h2>
+            </div>
+            <button type="button" class="btn-secondary btn-icon-only" id="refreshRuns" title="Refresh runs list">
+              🔄
+            </button>
+          </div>
+          <div id="runsList" class="runs-list scrollable"></div>
+        </section>
+
+        <section class="panel glass-card events-panel">
+          <div class="section-heading">
+            <div class="heading-wrap">
+              <span class="num-badge">05</span>
+              <h2>Rule-Based Events</h2>
+            </div>
+            <span id="eventCount" class="badge">0 events</span>
+          </div>
+          <div id="eventsList" class="events-list scrollable"></div>
+        </section>
+      </div>
+
+      <!-- Section 5: Timeline Graphs -->
+      <section class="panel glass-card timeline-panel">
+        <div class="section-heading border-bottom">
+          <div class="heading-wrap">
+            <span class="num-badge">06</span>
+            <h2>Run Analytics Timeline</h2>
+          </div>
+          <span id="timelineRun" class="run-badge">No run selected</span>
+        </div>
+        
+        <div class="chart-grid">
+          <div class="chart-wrapper">
+            <h3>Active Vehicles per Second</h3>
+            <div id="activeChart" class="chart"></div>
+          </div>
+          <div class="chart-wrapper">
+            <h3>Congestion Index Score</h3>
+            <div id="congestionChart" class="chart"></div>
+          </div>
+        </div>
+
+        <div class="table-wrap custom-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Active Vehicles</th>
+                <th>Cumulative Unique</th>
+                <th>Incoming Flow</th>
+                <th>Outgoing Flow</th>
+                <th>Avg. Velocity (px/f)</th>
+                <th>Congestion Rating</th>
+              </tr>
+            </thead>
+            <tbody id="timelineBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 6: Plain-Text Traffic Summary Report -->
+      <section class="panel glass-card report-panel">
+        <div class="section-heading border-bottom">
+          <div class="heading-wrap">
+            <span class="num-badge">07</span>
+            <h2>Generated Analytical Report</h2>
+          </div>
+          <span id="reportPath" class="report-path">No report loaded</span>
+        </div>
+        <pre id="reportContent">Select a run from the history panel or launch a new video analysis stream to populate the intelligence report.</pre>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; 2026 Traffic Intelligence System. Engineered with YOLOv8 & FastAPI.</p>
+    </footer>
+
+    <script src="/dashboard/app.js"></script>
+  </body>
+</html>
