@@ -5,7 +5,6 @@ This guide shows how to present the Traffic Intelligence system as a client-faci
 ## Start The Backend
 
 ```powershell
-cd C:\Users\dppel\Documents\Codex\2026-05-16\you-are-a-senior-ai-engineer\traffic-intelligence-system
 .\.venv\Scripts\python.exe -m uvicorn app.main:app --reload
 ```
 
